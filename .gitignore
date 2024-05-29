@@ -1,3 +1,4 @@
 vendor/
 *.json
 !jsonnetfile.json
+!jsonnetfile.lock.json
