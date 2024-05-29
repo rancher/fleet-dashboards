@@ -6,7 +6,7 @@ local createPanel(title, query) =
     g.query.prometheus.new('prometheus', query),
   ])
   // + g.panel.timeSeries.standardOptions.withUnit('reqps')
-  + g.panel.timeSeries.gridPos.withW(24)
+  + g.panel.timeSeries.gridPos.withW(10)
   + g.panel.timeSeries.gridPos.withH(8)
 ;
 
