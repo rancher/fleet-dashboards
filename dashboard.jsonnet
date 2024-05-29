@@ -1,35 +1,63 @@
-local g = import 'g.libsonnet';
+local lib = import 'funcs.libsonnet';
 
-local createDashboard(name, uid, description, panels) =
-  g.dashboard.new(name)
-  + g.dashboard.withUid(uid)
-  + g.dashboard.withDescription(description)
-  + g.dashboard.graphTooltip.withSharedCrosshair()
-  + g.dashboard.withPanels(panels);
-
-local createPanel(title, query) =
-  g.panel.timeSeries.new(title)
-  + g.panel.timeSeries.queryOptions.withTargets([
-    g.query.prometheus.new('prometheus', query),
-  ]);
-
-local desiredReadyPanel = createPanel(
-  'Resource Count - Desired Ready',
-  'sum by (name) (fleet_cluster_group_resource_count_desired_ready)',
-);
-
-local readyPanel = createPanel(
-  'Resource Count - Ready',
-  'sum by (name) (fleet_cluster_group_resource_count_ready)',
-);
-
-local panels = [
-  desiredReadyPanel,
-  readyPanel,
-  // Add more panels here if needed
+local panelData = [
+  {
+    title: 'Bundle - Desired Ready',
+    query: 'fleet_cluster_group_bundle_desired_ready',
+  },
+  {
+    title: 'Bundle - Ready',
+    query: 'fleet_cluster_group_bundle_ready',
+  },
+  {
+    title: 'Cluster Count',
+    query: 'fleet_cluster_group_cluster_count',
+  },
+  {
+    title: 'Non Ready Cluster Count',
+    query: 'fleet_cluster_group_non_ready_cluster_count',
+  },
+  {
+    title: 'Resource Count - Desired Ready',
+    query: 'fleet_cluster_group_resource_count_desired_ready',
+  },
+  {
+    title: 'Resource Count - Missing',
+    query: 'fleet_cluster_group_resource_count_missing',
+  },
+  {
+    title: 'Resource Count - Modified',
+    query: 'fleet_cluster_group_resource_count_modified',
+  },
+  {
+    title: 'Resource Count - Not Ready',
+    query: 'fleet_cluster_group_resource_count_notready',
+  },
+  {
+    title: 'Resource Count - Orphaned',
+    query: 'fleet_cluster_group_resource_count_orphaned',
+  },
+  {
+    title: 'Resource Count - Ready',
+    query: 'fleet_cluster_group_resource_count_ready',
+  },
+  {
+    title: 'Resource Count - Unknown',
+    query: 'fleet_cluster_group_resource_count_unknown',
+  },
+  {
+    title: 'Resource Count - Wait Applied',
+    query: 'fleet_cluster_group_resource_count_waitapplied',
+  },
+  {
+    title: 'State',
+    query: 'fleet_cluster_group_state',
+  },
 ];
 
-createDashboard('Fleet / ClusterGroup', 'fleet-cluster-group', 'ClusterGroup', panels)
+local panels = [lib.createPanel(p.title, p.query) for p in panelData];
+
+lib.createDashboard('Fleet / ClusterGroup', 'fleet-cluster-group', 'ClusterGroup', panels)
 // local grafonnet = import 'github.com/grafana/grafonnet/gen/grafonnet-latest/main.libsonnet';
 
 // local g = import 'g.libsonnet';
@@ -57,4 +85,3 @@ createDashboard('Fleet / ClusterGroup', 'fleet-cluster-group', 'ClusterGroup', p
 //   // + g.panel.timeSeries.gridPos.withW(24)
 //   // + g.panel.timeSeries.gridPos.withH(8),
 // ])
-
