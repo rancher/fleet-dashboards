@@ -58,30 +58,3 @@ local panelData = [
 local panels = [lib.createPanel(p.title, p.query) for p in panelData];
 
 lib.createDashboard('Fleet / ClusterGroup', 'fleet-cluster-group', 'ClusterGroup', panels)
-// local grafonnet = import 'github.com/grafana/grafonnet/gen/grafonnet-latest/main.libsonnet';
-
-// local g = import 'g.libsonnet';
-
-// g.dashboard.new('Fleet / ClusterGroup')
-// + g.dashboard.withUid('fleet-cluster-group')
-// + g.dashboard.withDescription('ClusterGroup')
-// + g.dashboard.graphTooltip.withSharedCrosshair()
-// + g.dashboard.withPanels([
-//   g.panel.timeSeries.new('Resource Count - Desired Ready')
-//   + g.panel.timeSeries.queryOptions.withTargets([
-//     g.query.prometheus.new(
-//       'prometheus',
-//       'sum by (name) (fleet_cluster_group_resource_count_desired_ready)',
-//     ),
-//   ]),
-//   g.panel.timeSeries.new('Resource Count - Ready')
-//   + g.panel.timeSeries.queryOptions.withTargets([
-//     g.query.prometheus.new(
-//       'prometheus',
-//       'sum by (name) (fleet_cluster_group_resource_count_ready)',
-//     ),
-//   ])
-//   // + g.panel.timeSeries.standardOptions.withUnit('reqps')
-//   // + g.panel.timeSeries.gridPos.withW(24)
-//   // + g.panel.timeSeries.gridPos.withH(8),
-// ])
