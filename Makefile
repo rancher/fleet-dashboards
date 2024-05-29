@@ -1,5 +1,8 @@
-build: dashboard.jsonnet
-	jsonnet -J vendor dashboard.jsonnet | tee dashboard.json
+build: *.jsonnet
+	for file in $(shell find . -name '*.jsonnet'); do \
+		jsonnet -J vendor $$file | tee $${file%.jsonnet}.json; \
+	done
+	# jsonnet -J vendor dashboard.jsonnet | tee dashboard.json
 
 deps-grafonnet:
 	jb install github.com/grafana/grafonnet/gen/grafonnet-latest@main
