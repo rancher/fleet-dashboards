@@ -1,7 +1,7 @@
 build: *.jsonnet
-	mkdir -p dashboards
+	mkdir -p out
 	for file in $(shell ls *.jsonnet); do \
-		jsonnet -J vendor $$file | tee dashboards/$${file%.jsonnet}.json; \
+		jsonnet -J vendor $$file | tee out/$${file%.jsonnet}.json; \
 	done
 
 deps-grafonnet:
