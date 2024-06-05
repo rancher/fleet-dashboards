@@ -1,12 +1,12 @@
-local variables = import './variables.libsonnet';
-local lib = import 'funcs.libsonnet';
+local lib = import '../lib/funcs.libsonnet';
+local variables = import '../lib/variables.libsonnet';
 
 local panelData = [
   {
     title: 'Clusters Desired Ready/Ready',
     queries: [
-      'fleet_gitrepo_desired_ready_clusters{exported_namespace=$namespace}',
-      'fleet_gitrepo_ready_clusters{exported_namespace=$namespace}',
+      'fleet_gitrepo_desired_ready_clusters{exported_namespace="$namespace"}',
+      'fleet_gitrepo_ready_clusters{exported_namespace="$namespace"}',
     ],
   },
   {

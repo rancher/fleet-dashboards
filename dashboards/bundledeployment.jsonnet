@@ -1,4 +1,4 @@
-local lib = import 'funcs.libsonnet';
+local lib = import '../lib/funcs.libsonnet';
 
 local panelData = [
   {

@@ -1,18 +1,25 @@
-build: *.jsonnet
+build: dashboards/*.jsonnet
 	mkdir -p out
-	for file in $(shell ls *.jsonnet); do \
-		jsonnet -J vendor $$file | tee out/$${file%.jsonnet}.json; \
+	for file in $(shell ls dashboards/*.jsonnet); do \
+		filename=$$(basename $${file%.jsonnet}); \
+		jsonnet -J vendor $$file | tee out/$${filename}.json; \
 	done
 
-deps-grafonnet:
-	jb install github.com/grafana/grafonnet/gen/grafonnet-latest@main
+clean:
+	rm -rf out/
 
-deps-json-bundler:
-	go install -a github.com/jsonnet-bundler/jsonnet-bundler/cmd/jb@latest
+clean-deps: clean
+	rm -rf vendor/
 
 deps-jsonnet:
 	go install github.com/google/go-jsonnet/cmd/jsonnet@latest
 	go install github.com/google/go-jsonnet/cmd/jsonnet-lint@latest
 
-deps: deps-json-bundler deps-jsonnet deps-grafonnet
+deps-json-bundler:
+	go install -a github.com/jsonnet-bundler/jsonnet-bundler/cmd/jb@latest
 
+deps-grafonnet:
+	jb init || true
+	jb install github.com/grafana/grafonnet/gen/grafonnet-latest@main
+
+deps: deps-json-bundler deps-jsonnet deps-grafonnet
