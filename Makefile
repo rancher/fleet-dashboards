@@ -1,6 +1,6 @@
 build: *.jsonnet
 	mkdir -p dashboards
-	for file in $(shell find . -name '*.jsonnet'); do \
+	for file in $(shell ls *.jsonnet); do \
 		jsonnet -J vendor $$file | tee dashboards/$${file%.jsonnet}.json; \
 	done
 
@@ -14,5 +14,5 @@ deps-jsonnet:
 	go install github.com/google/go-jsonnet/cmd/jsonnet@latest
 	go install github.com/google/go-jsonnet/cmd/jsonnet-lint@latest
 
-deps: deps-grafonnet deps-json-bundler deps-jsonnet
+deps: deps-json-bundler deps-jsonnet deps-grafonnet
 
