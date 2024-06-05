@@ -1,48 +1,45 @@
+local variables = import './variables.libsonnet';
 local lib = import 'funcs.libsonnet';
 
 local panelData = [
   {
-    title: 'Desired Ready Clusters',
-    query: 'fleet_gitrepo_desired_ready_clusters',
+    title: 'Clusters Desired Ready/Ready',
+    queries: [
+      'fleet_gitrepo_desired_ready_clusters{exported_namespace=$namespace}',
+      'fleet_gitrepo_ready_clusters{exported_namespace=$namespace}',
+    ],
   },
   {
-    title: 'Ready Clusters',
-    query: 'fleet_gitrepo_ready_clusters',
+    title: 'Resources Desired Ready/Ready',
+    queries: [
+      'fleet_gitrepo_resources_desired_ready',
+      'fleet_gitrepo_resources_ready',
+      'fleet_gitrepo_resources_not_ready',
+    ],
   },
   {
-    title: 'Resources Desired Ready',
-    query: 'fleet_gitrepo_resources_desired_ready',
+    title: 'Resources Missing/Modified/Unknown',
+    queries: [
+      'fleet_gitrepo_resources_missing',
+      'fleet_gitrepo_resources_modified',
+      'fleet_gitrepo_resources_unknown',
+    ],
   },
   {
-    title: 'Resources Missing',
-    query: 'fleet_gitrepo_resources_missing',
-  },
-  {
-    title: 'Resources Modified',
-    query: 'fleet_gitrepo_resources_modified',
-  },
-  {
-    title: 'Resources Not Ready',
-    query: 'fleet_gitrepo_resources_not_ready',
-  },
-  {
-    title: 'Resources Orphaned',
-    query: 'fleet_gitrepo_resources_orphaned',
-  },
-  {
-    title: 'Resources Ready',
-    query: 'fleet_gitrepo_resources_ready',
-  },
-  {
-    title: 'Resources Unknown',
-    query: 'fleet_gitrepo_resources_unknown',
-  },
-  {
-    title: 'Resources Wait Applied',
-    query: 'fleet_gitrepo_resources_wait_applied',
+    title: 'Resources',
+    queries: [
+      'fleet_gitrepo_resources_desired_ready',
+      'fleet_gitrepo_resources_ready',
+      'fleet_gitrepo_resources_not_ready',
+      'fleet_gitrepo_resources_missing',
+      'fleet_gitrepo_resources_modified',
+      'fleet_gitrepo_resources_unknown',
+    ],
   },
 ];
 
-local panels = [lib.createPanel(p.title, p.query) for p in panelData];
+local panels = [lib.createPanel(p.title, p.queries) for p in panelData];
 
-lib.createDashboard('Fleet / GitRepo', 'fleet-gitrepo', 'GitRepo', panels)
+lib.createDashboard('Fleet / GitRepo', 'fleet-gitrepo', 'GitRepo', panels, [
+  variables.namespace,
+])
