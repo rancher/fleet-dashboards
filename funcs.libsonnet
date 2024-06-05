@@ -1,9 +1,10 @@
 local g = import 'g.libsonnet';
 
-local createPanel(title, query) =
+local createPanel(title, queries) =
+  local qs = if std.isArray(queries) then queries else [queries];
   g.panel.timeSeries.new(title)
   + g.panel.timeSeries.queryOptions.withTargets([
-    g.query.prometheus.new('prometheus', query),
+    g.query.prometheus.new('prometheus', query) for query in qs
   ])
   // + g.panel.timeSeries.standardOptions.withUnit('reqps')
   + g.panel.timeSeries.gridPos.withW(24)
