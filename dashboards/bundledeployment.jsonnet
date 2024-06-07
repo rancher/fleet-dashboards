@@ -1,4 +1,5 @@
 local lib = import '../lib/funcs.libsonnet';
+local variables = import '../lib/variables.libsonnet';
 
 local panelData = [
   {
@@ -9,4 +10,9 @@ local panelData = [
 
 local panels = [lib.createPanel(p.title, p.query) for p in panelData];
 
-lib.createDashboard('Fleet / BundleDeployment', 'fleet-bundledeployment', 'BundleDeployment', panels)
+lib.createDashboard(
+  'Fleet / BundleDeployment',
+  'fleet-bundledeployment',
+  'BundleDeployment',
+  panels,
+)

@@ -1,44 +1,47 @@
 local lib = import '../lib/funcs.libsonnet';
+local variables = import '../lib/variables.libsonnet';
 
 local panelData = [
   {
     title: 'Bundle Desired Ready',
-    query: 'fleet_bundle_desired_ready',
+    query: 'fleet_bundle_desired_ready{exported_namespace="$namespace"}',
   },
   {
     title: 'Bundle Err Applied',
-    query: 'fleet_bundle_err_applied',
+    query: 'fleet_bundle_err_applied{exported_namespace="$namespace"}',
   },
   {
     title: 'Bundle Modified',
-    query: 'fleet_bundle_modified',
+    query: 'fleet_bundle_modified{exported_namespace="$namespace"}',
   },
   {
     title: 'Bundle Not Ready',
-    query: 'fleet_bundle_not_ready',
+    query: 'fleet_bundle_not_ready{exported_namespace="$namespace"}',
   },
   {
     title: 'Bundle Out of Sync',
-    query: 'fleet_bundle_out_of_sync',
+    query: 'fleet_bundle_out_of_sync{exported_namespace="$namespace"}',
   },
   {
     title: 'Bundle Pending',
-    query: 'fleet_bundle_pending',
+    query: 'fleet_bundle_pending{exported_namespace="$namespace"}',
   },
   {
     title: 'Bundle Ready',
-    query: 'fleet_bundle_ready',
+    query: 'fleet_bundle_ready{exported_namespace="$namespace"}',
   },
   {
     title: 'Bundle State',
-    query: 'fleet_bundle_state',
+    query: 'fleet_bundle_state{exported_namespace="$namespace"}',
   },
   {
     title: 'Bundle Wait Applied',
-    query: 'fleet_bundle_wait_applied',
+    query: 'fleet_bundle_wait_applied{exported_namespace="$namespace"}',
   },
 ];
 
 local panels = [lib.createPanel(p.title, p.query) for p in panelData];
 
-lib.createDashboard('Fleet / Bundle', 'fleet-bundle', 'Bundle', panels)
+lib.createDashboard('Fleet / Bundle', 'fleet-bundle', 'Bundle', panels, [
+  variables.namespace,
+])
