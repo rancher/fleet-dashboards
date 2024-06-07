@@ -19,6 +19,8 @@ local createDashboard(name, uid, description, panels, variables=[]) =
   + g.dashboard.withDescription(description)
   + g.dashboard.graphTooltip.withSharedCrosshair()
   + g.dashboard.withPanels(panels)
+  + g.dashboard.time.withFrom("now-1h")
+  + g.dashboard.time.withTo("now")
   + if std.length(variables) > 0 then g.dashboard.withVariables(variables) else {};
 
 {
