@@ -1,6 +1,6 @@
 local g = import 'g.libsonnet';
 
-local createPanel(title, queries) =
+local createTimeSeriesPanel(title, queries) =
   local qs = if std.isArray(queries) then queries else [queries];
   g.panel.timeSeries.new(title)
   + g.panel.timeSeries.queryOptions.withTargets(
@@ -22,6 +22,6 @@ local createDashboard(name, uid, description, panels, variables=[]) =
   + if std.length(variables) > 0 then g.dashboard.withVariables(variables) else {};
 
 {
-  createPanel: createPanel,
+  createTimeSeriesPanel: createTimeSeriesPanel,
   createDashboard: createDashboard,
 }
