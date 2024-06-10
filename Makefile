@@ -2,15 +2,18 @@ build: dashboards/*.jsonnet
 	mkdir -p out
 	for file in $(shell ls dashboards/*.jsonnet); do \
 		filename=$$(basename $${file%.jsonnet}); \
-		jsonnet -J vendor $$file | tee out/$${filename}.json; \
+		(jsonnet -J vendor $$file | tee out/$${filename}.json || exit 1); \
 	done
+
+cm: configmap
 
 configmap: build
 	kubectl create configmap rancher-fleet-dashboards \
 		--from-file=out/ \
 		--dry-run=client \
-		-o yaml > configmap.yaml
+		-o yaml > configmap.yaml || (echo "Error: Failed to create configmap"; exit 1)
 
+configmap-labels: configmap
 	yq eval " \
 		.metadata.labels.app = \"rancher-monitoring-grafana\" | \
 	  	.metadata.labels.\"app.kubernetes.io/instance\" = \"rancher-monitoring\" | \
@@ -24,15 +27,18 @@ configmap: build
 	  	.metadata.namespace = \"cattle-dashboards\" \
 	" -i configmap.yaml
 
-	kubectl apply -f configmap.yaml
+cma: configmap-apply
 
-cm: configmap
+configmap-apply: configmap-labels
+	kubectl apply -f configmap.yaml
 
 clean:
 	rm -rf out/
 
 clean-deps: clean
 	rm -rf vendor/
+
+deps: deps-json-bundler deps-jsonnet deps-grafonnet
 
 deps-jsonnet:
 	go install github.com/google/go-jsonnet/cmd/jsonnet@latest
@@ -44,5 +50,3 @@ deps-json-bundler:
 deps-grafonnet:
 	jb init || true
 	jb install github.com/grafana/grafonnet/gen/grafonnet-latest@main
-
-deps: deps-json-bundler deps-jsonnet deps-grafonnet
