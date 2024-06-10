@@ -2,3 +2,4 @@ out/
 vendor/
 !jsonnetfile.json
 !jsonnetfile.lock.json
+configmap.yaml

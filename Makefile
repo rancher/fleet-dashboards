@@ -34,6 +34,7 @@ configmap-apply: configmap-labels
 
 clean:
 	rm -rf out/
+	rm configmap.yaml
 
 clean-deps: clean
 	rm -rf vendor/
