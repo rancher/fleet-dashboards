@@ -1,34 +1,32 @@
 local g = import 'g.libsonnet';
 
-local defaultHeight = 8;
+local defaultHeight = 8;  // TODO Import from a config.json/defaults.json?
 local defaultWidth = 24;
 
-// local panelHeight = 8;
-// local panelWidth = 12;
-// local columns = 2;  // Number of columns in the grid
+local assignGridPosByWidth(panels, height) =
+  local gridWidth = 24;
+  local assignPos(panels) =
+    local foldFunc(acc, panel) =
+      local panelWidth = panel.gridPos.w;
+      if acc.currentWidth + panelWidth > gridWidth then
+        // Move to the next row if the current row is full.
+        {
+          panels: acc.panels + [panel { gridPos: { w: panelWidth, h: height, x: 0, y: acc.currentHeight + height } }],
+          currentWidth: panelWidth,
+          currentHeight: acc.currentHeight + height,
+        }
+      else
+        // Place the panel in the current row.
+        {
+          panels: acc.panels + [panel { gridPos: { w: panelWidth, h: height, x: acc.currentWidth, y: acc.currentHeight } }],
+          currentWidth: acc.currentWidth + panelWidth,
+          currentHeight: acc.currentHeight,
+        };
 
-// local arrangePanels(panels, panelHeight, panelWidth) = [
-//   {
-//     panel: panel,
-//     gridPos: {
-//       h: panelHeight,
-//       w: panelWidth,
-//       x: (index % columns) * panelWidth,
-//       y: std.floor(index / columns) * panelHeight,
-//     },
-//   }
-//   for index in std.range(0, std.length(panels) - 1)
-//   for panel in [panels[index]]
-// ];
+    local result = std.foldl(foldFunc, panels, { panels: [], currentWidth: 0, currentHeight: 0 });
+    result.panels;
+  assignPos(panels);
 
-// local panels = [
-//   { title: 'Panel 1' },
-//   { title: 'Panel 2' },
-//   { title: 'Panel 3' },
-//   { title: 'Panel 4' },
-// ];
-
-// arrangePanels(panels, panelHeight, panelWidth);
 
 local fromQueries(queries) = [
   g.query.prometheus.new('prometheus', query.query)
@@ -37,33 +35,36 @@ local fromQueries(queries) = [
   for query in queries
 ];
 
-local createStatPanel(title, queries, unit=null, width=defaultWidth, height=defaultHeight) =
+local createStatPanel(title, queries, unit=null, width=defaultWidth) =
   local qs = if std.isArray(queries) then queries else [queries];
+  local stat = g.panel.stat;
 
-  g.panel.stat.new(title)
-  + g.panel.stat.queryOptions.withTargets(fromQueries(qs))
-  + g.panel.stat.gridPos.withW(width)
-  + g.panel.stat.gridPos.withH(height)
-  + (if unit != null then g.panel.stat.standardOptions.withUnit(unit) else {});
+  stat.new(title)
+  + stat.queryOptions.withTargets(fromQueries(qs))
+  + stat.gridPos.withW(width)
+  + (if unit != null then stat.standardOptions.withUnit(unit) else {});
 
-local createTimeSeriesPanel(title, queries, unit=null, width=defaultWidth, height=defaultHeight) =
+local createTimeSeriesPanel(title, queries, unit=null, width=defaultWidth) =
   local qs = if std.isArray(queries) then queries else [queries];
+  local ts = g.panel.timeSeries;
 
-  g.panel.timeSeries.new(title)
-  + g.panel.timeSeries.queryOptions.withTargets(fromQueries(qs))
-  + g.panel.timeSeries.gridPos.withW(width)
-  + g.panel.timeSeries.gridPos.withH(height)
-  + (if unit != null then g.panel.stat.standardOptions.withUnit(unit) else {});
+  ts.new(title)
+  + ts.queryOptions.withTargets(fromQueries(qs))
+  + ts.gridPos.withW(width)
+  + (if unit != null then ts.standardOptions.withUnit(unit) else {});
 
 local createDashboard(name, uid, description, panels, variables=[]) =
+  local pls = assignGridPosByWidth(panels, defaultHeight);
+
   g.dashboard.new(name)
   + g.dashboard.withUid(uid)
   + g.dashboard.withDescription(description)
   + g.dashboard.graphTooltip.withSharedCrosshair()
-  + g.dashboard.withPanels(panels)
+  + g.dashboard.withPanels(pls)
   + g.dashboard.time.withFrom('now-1h')
   + g.dashboard.time.withTo('now')
   + if std.length(variables) > 0 then g.dashboard.withVariables(variables) else {};
+
 
 {
   createTimeSeriesPanel: createTimeSeriesPanel,
