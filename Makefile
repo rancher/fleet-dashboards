@@ -1,4 +1,4 @@
-build: dashboards/*.jsonnet
+build-dashboards: dashboards/*.jsonnet
 	mkdir -p out; \
 	for file in $(shell ls dashboards/*.jsonnet); do \
 		echo "Building $${file}"; \
@@ -6,15 +6,13 @@ build: dashboards/*.jsonnet
 		jsonnet -J vendor $$file > out/$${filename}.json || exit 1; \
 	done
 
-cm: configmap
-
-configmap: build
+build-configmap:
 	kubectl create configmap rancher-fleet-dashboards \
 		--from-file=out/ \
 		--dry-run=client \
 		-o yaml > configmap.yaml || (echo "Error: Failed to create configmap"; exit 1)
 
-configmap-debug-labels: configmap
+patch-configmap:
 	yq eval " \
 		.metadata.labels.app = \"rancher-monitoring-grafana\" | \
 	  	.metadata.labels.\"app.kubernetes.io/instance\" = \"rancher-monitoring\" | \
@@ -28,10 +26,12 @@ configmap-debug-labels: configmap
 	  	.metadata.namespace = \"cattle-dashboards\" \
 	" -i configmap.yaml
 
-cma: configmap-apply
-
-configmap-apply: configmap-debug-labels
+configmap-apply:
 	kubectl apply -f configmap.yaml
+
+configmap: build-configmap patch-configmap configmap-apply
+
+all: build-dashboards configmap
 
 clean:
 	rm -rf out/
