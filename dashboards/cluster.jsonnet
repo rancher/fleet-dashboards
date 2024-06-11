@@ -48,7 +48,7 @@ local panelData = [
   },
 ];
 
-local panels = [lib.createTimeSeriesPanel(p.title, p.query) for p in panelData];
+local panels = [lib.createTimeSeriesPanel(p.title, {query: p.query}) for p in panelData];
 
 lib.createDashboard('Fleet / Cluster', 'fleet-cluster', 'Cluster', panels, [
   variables.namespace,

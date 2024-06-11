@@ -1,8 +1,9 @@
 build: dashboards/*.jsonnet
-	mkdir -p out
+	mkdir -p out; \
 	for file in $(shell ls dashboards/*.jsonnet); do \
+		echo "Building $${file}"; \
 		filename=$$(basename $${file%.jsonnet}); \
-		(jsonnet -J vendor $$file | tee out/$${filename}.json || exit 1); \
+		jsonnet -J vendor $$file > out/$${filename}.json; \
 	done
 
 cm: configmap
@@ -13,7 +14,7 @@ configmap: build
 		--dry-run=client \
 		-o yaml > configmap.yaml || (echo "Error: Failed to create configmap"; exit 1)
 
-configmap-labels: configmap
+configmap-debug-labels: configmap
 	yq eval " \
 		.metadata.labels.app = \"rancher-monitoring-grafana\" | \
 	  	.metadata.labels.\"app.kubernetes.io/instance\" = \"rancher-monitoring\" | \
@@ -29,7 +30,7 @@ configmap-labels: configmap
 
 cma: configmap-apply
 
-configmap-apply: configmap-labels
+configmap-apply: configmap-debug-labels
 	kubectl apply -f configmap.yaml
 
 clean:
