@@ -3,7 +3,7 @@ build: dashboards/*.jsonnet
 	for file in $(shell ls dashboards/*.jsonnet); do \
 		echo "Building $${file}"; \
 		filename=$$(basename $${file%.jsonnet}); \
-		jsonnet -J vendor $$file > out/$${filename}.json; \
+		jsonnet -J vendor $$file > out/$${filename}.json || exit 1; \
 	done
 
 cm: configmap
