@@ -48,6 +48,7 @@ local createStatPanel(title, queries, unit=null, width=defaultWidth, height=defa
 
 local createTimeSeriesPanel(title, queries, unit=null, width=defaultWidth, height=defaultHeight) =
   local qs = if std.isArray(queries) then queries else [queries];
+
   g.panel.timeSeries.new(title)
   + g.panel.timeSeries.queryOptions.withTargets(fromQueries(qs))
   + g.panel.timeSeries.gridPos.withW(width)
