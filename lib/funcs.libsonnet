@@ -30,18 +30,18 @@ local defaultWidth = 24;
 
 // arrangePanels(panels, panelHeight, panelWidth);
 
+local fromQueries(queries) = [
+  g.query.prometheus.new('prometheus', query.query)
+  + (if std.get(query, 'legendFormat') != null
+     then g.query.prometheus.withLegendFormat(query.legendFormat) else {})
+  for query in queries
+];
+
 local createStatPanel(title, queries, unit=null, width=defaultWidth, height=defaultHeight) =
   local qs = if std.isArray(queries) then queries else [queries];
 
   g.panel.stat.new(title)
-  + g.panel.stat.queryOptions.withTargets(
-    [
-      g.query.prometheus.new('prometheus', query.query)
-      + (if std.get(query, 'legendFormat') != null
-         then g.query.prometheus.withLegendFormat(query.legendFormat) else {})
-      for query in qs
-    ]
-  )
+  + g.panel.stat.queryOptions.withTargets(fromQueries(qs))
   + g.panel.stat.gridPos.withW(width)
   + g.panel.stat.gridPos.withH(height)
   + (if unit != null then g.panel.stat.standardOptions.withUnit(unit) else {});
@@ -49,14 +49,7 @@ local createStatPanel(title, queries, unit=null, width=defaultWidth, height=defa
 local createTimeSeriesPanel(title, queries, unit=null, width=defaultWidth, height=defaultHeight) =
   local qs = if std.isArray(queries) then queries else [queries];
   g.panel.timeSeries.new(title)
-  + g.panel.timeSeries.queryOptions.withTargets(
-    [
-      g.query.prometheus.new('prometheus', query.query)
-      + (if std.get(query, 'legendFormat') != null
-         then g.query.prometheus.withLegendFormat(query.legendFormat) else {})
-      for query in qs
-    ]
-  )
+  + g.panel.timeSeries.queryOptions.withTargets(fromQueries(qs))
   + g.panel.timeSeries.gridPos.withW(width)
   + g.panel.timeSeries.gridPos.withH(height)
   + (if unit != null then g.panel.stat.standardOptions.withUnit(unit) else {});
