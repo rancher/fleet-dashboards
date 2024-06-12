@@ -7,7 +7,7 @@ local panels = [
     'Clusters Ready Percent',
     [
       {
-        query: 'sum(fleet_gitrepo_ready_clusters{exported_namespace="$namespace"}) / sum(fleet_gitrepo_desired_ready_clusters{exported_namespace="$namespace"})',
+        query: 'sum(fleet_gitrepo_ready_clusters{exported_namespace="$namespace",name=~"$name"}) / sum(fleet_gitrepo_desired_ready_clusters{exported_namespace="$namespace",name=~"$name"})',
         legendFormat: 'Ready Clusters Percent',
       },
     ],
@@ -18,54 +18,51 @@ local panels = [
     'Clusters Desired Ready/Ready',
     [
       {
-        query: 'sum(fleet_gitrepo_desired_ready_clusters{exported_namespace="$namespace"})',
+        query: 'sum(fleet_gitrepo_desired_ready_clusters{exported_namespace="$namespace",name=~"$name"})',
         legendFormat: 'Desired Ready',
       },
       {
-        query: 'sum(fleet_gitrepo_ready_clusters{exported_namespace="$namespace"})',
+        query: 'sum(fleet_gitrepo_ready_clusters{exported_namespace="$namespace",name=~"$name"})',
         legendFormat: 'Ready',
       },
       {
-        query: 'sum(fleet_gitrepo_desired_ready_clusters{exported_namespace="$namespace"}) - sum(fleet_gitrepo_ready_clusters{exported_namespace="$namespace"})',
-        legendFormat: 'Not Ready Clusters',
+        query: 'sum(fleet_gitrepo_desired_ready_clusters{exported_namespace="$namespace",name=~"$name"}) - sum(fleet_gitrepo_ready_clusters{exported_namespace="$namespace",name=~"$name"})',
+        legendFormat: 'Not Ready',
       },
     ],
     width=12,
   ),
   fns.createTimeSeriesPanel(
-    'Clusters Desired Ready/Ready', [
-      { query: 'fleet_gitrepo_desired_ready_clusters{exported_namespace="$namespace"}' },
-      { query: 'fleet_gitrepo_ready_clusters{exported_namespace="$namespace"}' },
+    'Clusters', [
+      {
+        query: 'sum(fleet_gitrepo_desired_ready_clusters{exported_namespace="$namespace",name=~"$name"})',
+        legendFormat: 'Desired Ready',
+      },
+      {
+        query: 'sum(fleet_gitrepo_ready_clusters{exported_namespace="$namespace",name=~"$name"})',
+        legendFormat: 'Ready',
+      },
     ]
-  ),
-  fns.createTimeSeriesPanel(
-    'Resources Desired Ready/Ready', [
-      { query: 'fleet_gitrepo_resources_desired_ready{exported_namespace="$namespace"}' },
-      { query: 'fleet_gitrepo_resources_ready{exported_namespace="$namespace"}' },
-      { query: 'fleet_gitrepo_resources_not_ready{exported_namespace="$namespace"}' },
-    ]
-  ),
-  fns.createTimeSeriesPanel(
-    'Resources Missing/Modified/Unknown', [
-      { query: 'fleet_gitrepo_resources_missing{exported_namespace="$namespace"}' },
-      { query: 'fleet_gitrepo_resources_modified{exported_namespace="$namespace"}' },
-      { query: 'fleet_gitrepo_resources_unknown{exported_namespace="$namespace"}' },
-    ],
-    width=12,
   ),
   fns.createTimeSeriesPanel(
     'Resources', [
-      { query: 'fleet_gitrepo_resources_desired_ready{exported_namespace="$namespace"}' },
-      { query: 'fleet_gitrepo_resources_ready{exported_namespace="$namespace"}' },
-      { query: 'fleet_gitrepo_resources_not_ready{exported_namespace="$namespace"}' },
-      { query: 'fleet_gitrepo_resources_missing{exported_namespace="$namespace"}' },
-      { query: 'fleet_gitrepo_resources_modified{exported_namespace="$namespace"}' },
-      { query: 'fleet_gitrepo_resources_unknown{exported_namespace="$namespace"}' },
+      { query: 'sum(fleet_gitrepo_resources_desired_ready{exported_namespace="$namespace",name=~"$name"})',
+        legendFormat: 'Desired Ready',},
+      { query: 'sum(fleet_gitrepo_resources_ready{exported_namespace="$namespace",name=~"$name"})',
+        legendFormat: 'Ready',},
+      { query: 'sum(fleet_gitrepo_resources_not_ready{exported_namespace="$namespace",name=~"$name"})',
+        legendFormat: 'Not Ready',},
+      { query: 'sum(fleet_gitrepo_resources_missing{exported_namespace="$namespace",name=~"$name"})',
+        legendFormat: 'Missing',},
+      { query: 'sum(fleet_gitrepo_resources_modified{exported_namespace="$namespace",name=~"$name"})',
+        legendFormat: 'Modified',},
+      { query: 'sum(fleet_gitrepo_resources_unknown{exported_namespace="$namespace",name=~"$name"})',
+        legendFormat: 'Unknown',},
     ],
-    width=12,
   ),
 ];
 
 fns.createDashboard('Fleet / GitRepo', 'fleet-gitrepo', 'GitRepo', panels, [
   vars.gitrepo.namespace,
+  vars.gitrepo.name,
 ])
