@@ -35,6 +35,12 @@ local templateVar(templateVarName, labelName, metricName, includeAll=false) =
       'exported_namespace',
       'fleet_cluster_desired_ready_git_repos',
     ),
+    name: templateVar(
+      'name',
+      'name',
+      'fleet_cluster_desired_ready_git_repos{exported_namespace=~"$namespace"}',
+      true,
+    ),
   },
   clusterGroup: {
     namespace: templateVar(
