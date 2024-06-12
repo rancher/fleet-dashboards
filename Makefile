@@ -31,14 +31,16 @@ configmap-apply:
 
 configmap: build-configmap patch-configmap configmap-apply
 
-all: build-dashboards configmap
+debug: build-dashboards configmap
 
 clean:
 	rm -rf out/
 	rm configmap.yaml
 
-clean-deps: clean
+clean-deps:
 	rm -rf vendor/
+
+clean-all: clean clean-deps
 
 deps: deps-json-bundler deps-jsonnet deps-grafonnet
 
