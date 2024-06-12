@@ -1,5 +1,5 @@
 local fns = import '../lib/funcs.libsonnet';
-local variables = import '../lib/variables.libsonnet';
+local vars = (import '../lib/variables.libsonnet');
 local g = import 'g.libsonnet';
 
 local panels = [
@@ -18,16 +18,16 @@ local panels = [
     'Clusters Desired Ready/Ready',
     [
       {
-        query: 'sum(fleet_gitrepo_desired_ready_clusters{exported_namespace="$namespace"}) - sum(fleet_gitrepo_ready_clusters{exported_namespace="$namespace"})',
-        legendFormat: 'Not Ready Clusters',
-      },
-      {
         query: 'sum(fleet_gitrepo_desired_ready_clusters{exported_namespace="$namespace"})',
         legendFormat: 'Desired Ready',
       },
       {
         query: 'sum(fleet_gitrepo_ready_clusters{exported_namespace="$namespace"})',
         legendFormat: 'Ready',
+      },
+      {
+        query: 'sum(fleet_gitrepo_desired_ready_clusters{exported_namespace="$namespace"}) - sum(fleet_gitrepo_ready_clusters{exported_namespace="$namespace"})',
+        legendFormat: 'Not Ready Clusters',
       },
     ],
     width=12,
@@ -67,5 +67,5 @@ local panels = [
 ];
 
 fns.createDashboard('Fleet / GitRepo', 'fleet-gitrepo', 'GitRepo', panels, [
-  variables.namespace,
+  vars.gitrepo.namespace,
 ])

@@ -1,5 +1,5 @@
 local lib = import '../lib/funcs.libsonnet';
-local variables = import '../lib/variables.libsonnet';
+local vars = (import '../lib/variables.libsonnet').clusterGroup;
 
 local panelData = [
   {
@@ -59,5 +59,5 @@ local panelData = [
 local panels = [lib.createTimeSeriesPanel(p.title, {query: p.query}) for p in panelData];
 
 lib.createDashboard('Fleet / ClusterGroup', 'fleet-cluster-group', 'ClusterGroup', panels, [
-  variables.namespace,
+  vars.namespace,
 ])

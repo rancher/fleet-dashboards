@@ -1,5 +1,5 @@
 local lib = import '../lib/funcs.libsonnet';
-local variables = import '../lib/variables.libsonnet';
+local vars = (import '../lib/variables.libsonnet').bundle;
 
 local panelData = [
   {
@@ -43,5 +43,5 @@ local panelData = [
 local panels = [lib.createTimeSeriesPanel(p.title, {query: p.query}) for p in panelData];
 
 lib.createDashboard('Fleet / Bundle', 'fleet-bundle', 'Bundle', panels, [
-  variables.namespace,
+  vars.namespace,
 ])
