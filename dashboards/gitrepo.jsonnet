@@ -44,6 +44,35 @@ local panels = [
       },
     ]
   ),
+  fns.createStatPanel(
+    'Resources Ready Percent',
+    [
+      {
+        query: 'sum(fleet_gitrepo_resources_ready{exported_namespace="$namespace",name=~"$name"}) / sum(fleet_gitrepo_resources_desired_ready{exported_namespace="$namespace",name=~"$name"})',
+        legendFormat: 'Ready Resources Percent',
+      },
+    ],
+    unit='percentunit',
+    width=12,
+  ),
+  fns.createStatPanel(
+    'Resources Desired Ready/Ready',
+    [
+      {
+        query: 'sum(fleet_gitrepo_resources_desired_ready{exported_namespace="$namespace",name=~"$name"})',
+        legendFormat: 'Desired Ready',
+      },
+      {
+        query: 'sum(fleet_gitrepo_resources_ready{exported_namespace="$namespace",name=~"$name"})',
+        legendFormat: 'Ready',
+      },
+      {
+        query: 'sum(fleet_gitrepo_resources_not_ready{exported_namespace="$namespace",name=~"$name"})',
+        legendFormat: 'Not Ready',
+      },
+    ],
+    width=12,
+  ),
   fns.createTimeSeriesPanel(
     'Resources', [
       { query: 'sum(fleet_gitrepo_resources_desired_ready{exported_namespace="$namespace",name=~"$name"})',
