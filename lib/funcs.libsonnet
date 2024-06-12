@@ -40,7 +40,8 @@ local createPanel(panelObject, title, queries, options) =
   panelObject.new(title)
   + panelObject.queryOptions.withTargets(fromQueries(qs))
   + panelObject.gridPos.withW(std.get(options, 'width', defaultWidth))
-  + panelObject.standardOptions.withUnit(std.get(options, 'unit', null));
+  + panelObject.standardOptions.withUnit(std.get(options, 'unit', null))
+  + panelObject.standardOptions.withDecimals(std.get(options, 'decimals', 0));
 
 local createStatPanel(title, queries, options={}) =
   createPanel(g.panel.stat, title, queries, options);
