@@ -15,13 +15,7 @@ build-configmap:
 patch-configmap:
 	yq eval " \
 		.metadata.labels.app = \"rancher-monitoring-grafana\" | \
-	  	.metadata.labels.\"app.kubernetes.io/instance\" = \"rancher-monitoring\" | \
-	  	.metadata.labels.\"app.kubernetes.io/managed-by\" = \"Helm\" | \
-	  	.metadata.labels.\"app.kubernetes.io/part-of\" = \"rancher-monitoring\" | \
-	  	.metadata.labels.\"app.kubernetes.io/version\" = \"104.0.0-rc1_up45.31.1\" | \
-	  	.metadata.labels.chart = \"rancher-monitoring-104.0.0-rc1_up45.31.1\" | \
 	  	.metadata.labels.grafana_dashboard = \"1\" | \
-	  	.metadata.labels.heritage = \"Helm\" | \
 	  	.metadata.labels.release = \"rancher-monitoring\" | \
 	  	.metadata.namespace = \"cattle-dashboards\" \
 	" -i configmap.yaml
