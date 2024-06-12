@@ -35,23 +35,18 @@ local fromQueries(queries) = [
   for query in queries
 ];
 
-local createStatPanel(title, queries, unit=null, width=defaultWidth) =
+local createPanel(panelObject, title, queries, options) =
   local qs = if std.isArray(queries) then queries else [queries];
-  local stat = g.panel.stat;
+  panelObject.new(title)
+  + panelObject.queryOptions.withTargets(fromQueries(qs))
+  + panelObject.gridPos.withW(std.get(options, 'width', defaultWidth))
+  + panelObject.standardOptions.withUnit(std.get(options, 'unit', null));
 
-  stat.new(title)
-  + stat.queryOptions.withTargets(fromQueries(qs))
-  + stat.gridPos.withW(width)
-  + (if unit != null then stat.standardOptions.withUnit(unit) else {});
+local createStatPanel(title, queries, options={}) =
+  createPanel(g.panel.stat, title, queries, options);
 
-local createTimeSeriesPanel(title, queries, unit=null, width=defaultWidth) =
-  local qs = if std.isArray(queries) then queries else [queries];
-  local ts = g.panel.timeSeries;
-
-  ts.new(title)
-  + ts.queryOptions.withTargets(fromQueries(qs))
-  + ts.gridPos.withW(width)
-  + (if unit != null then ts.standardOptions.withUnit(unit) else {});
+local createTimeSeriesPanel(title, queries, options={}) =
+  createPanel(g.panel.timeSeries, title, queries, options);
 
 local createDashboard(name, uid, description, panels, variables=[]) =
   local pls = assignGridPosByWidth(panels, defaultHeight);
