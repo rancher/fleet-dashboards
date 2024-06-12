@@ -3,22 +3,23 @@ local g = import 'g.libsonnet';
 local defaultHeight = 8;  // TODO Import from a config.json/defaults.json?
 local defaultWidth = 24;
 
-local assignGridPosByWidth(panels, height) =
+local assignGridPosByWidth(panels) =
   local gridWidth = 24;
   local assignPos(panels) =
     local foldFunc(acc, panel) =
       local panelWidth = panel.gridPos.w;
+      local panelHeight = panel.gridPos.h;
       if acc.currentWidth + panelWidth > gridWidth then
         // Move to the next row if the current row is full.
         {
-          panels: acc.panels + [panel { gridPos: { w: panelWidth, h: height, x: 0, y: acc.currentHeight + height } }],
+          panels: acc.panels + [panel { gridPos: { w: panelWidth, h: panelHeight, x: 0, y: acc.currentHeight + panelHeight } }],
           currentWidth: panelWidth,
-          currentHeight: acc.currentHeight + height,
+          currentHeight: acc.currentHeight + panelHeight,
         }
       else
         // Place the panel in the current row.
         {
-          panels: acc.panels + [panel { gridPos: { w: panelWidth, h: height, x: acc.currentWidth, y: acc.currentHeight } }],
+          panels: acc.panels + [panel { gridPos: { w: panelWidth, h: panelHeight, x: acc.currentWidth, y: acc.currentHeight } }],
           currentWidth: acc.currentWidth + panelWidth,
           currentHeight: acc.currentHeight,
         };
@@ -40,6 +41,7 @@ local createPanel(panelObject, title, queries, options) =
   panelObject.new(title)
   + panelObject.queryOptions.withTargets(fromQueries(qs))
   + panelObject.gridPos.withW(std.get(options, 'width', defaultWidth))
+  + panelObject.gridPos.withH(std.get(options, 'height', defaultHeight))
   + panelObject.standardOptions.withUnit(std.get(options, 'unit', null))
   + panelObject.standardOptions.withDecimals(std.get(options, 'decimals', 0));
 
@@ -50,7 +52,7 @@ local createTimeSeriesPanel(title, queries, options={}) =
   createPanel(g.panel.timeSeries, title, queries, options);
 
 local createDashboard(name, uid, description, panels, variables=[]) =
-  local pls = assignGridPosByWidth(panels, defaultHeight);
+  local pls = assignGridPosByWidth(panels);
 
   g.dashboard.new(name)
   + g.dashboard.withUid(uid)
