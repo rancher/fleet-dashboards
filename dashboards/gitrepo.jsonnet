@@ -11,8 +11,7 @@ local panels = [
         legendFormat: 'Ready Clusters Percent',
       },
     ],
-    unit='percentunit',
-    width=12,
+    options={ width: 12, unit: 'percentunit' },
   ),
   fns.createStatPanel(
     'Clusters Desired Ready/Ready',
@@ -30,7 +29,7 @@ local panels = [
         legendFormat: 'Not Ready',
       },
     ],
-    width=12,
+    options={ width: 12 },
   ),
   fns.createTimeSeriesPanel(
     'Clusters', [
@@ -52,8 +51,7 @@ local panels = [
         legendFormat: 'Ready Resources Percent',
       },
     ],
-    unit='percentunit',
-    width=12,
+    { unit: 'percentunit', width: 12 },
   ),
   fns.createStatPanel(
     'Resources Desired Ready/Ready',
@@ -71,22 +69,35 @@ local panels = [
         legendFormat: 'Not Ready',
       },
     ],
-    width=12,
+    { width: 12 },
   ),
   fns.createTimeSeriesPanel(
-    'Resources', [
-      { query: 'sum(fleet_gitrepo_resources_desired_ready{exported_namespace="$namespace",name=~"$name"})',
-        legendFormat: 'Desired Ready',},
-      { query: 'sum(fleet_gitrepo_resources_ready{exported_namespace="$namespace",name=~"$name"})',
-        legendFormat: 'Ready',},
-      { query: 'sum(fleet_gitrepo_resources_not_ready{exported_namespace="$namespace",name=~"$name"})',
-        legendFormat: 'Not Ready',},
-      { query: 'sum(fleet_gitrepo_resources_missing{exported_namespace="$namespace",name=~"$name"})',
-        legendFormat: 'Missing',},
-      { query: 'sum(fleet_gitrepo_resources_modified{exported_namespace="$namespace",name=~"$name"})',
-        legendFormat: 'Modified',},
-      { query: 'sum(fleet_gitrepo_resources_unknown{exported_namespace="$namespace",name=~"$name"})',
-        legendFormat: 'Unknown',},
+    'Resources',
+    [
+      {
+        query: 'sum(fleet_gitrepo_resources_desired_ready{exported_namespace="$namespace",name=~"$name"})',
+        legendFormat: 'Desired Ready',
+      },
+      {
+        query: 'sum(fleet_gitrepo_resources_ready{exported_namespace="$namespace",name=~"$name"})',
+        legendFormat: 'Ready',
+      },
+      {
+        query: 'sum(fleet_gitrepo_resources_not_ready{exported_namespace="$namespace",name=~"$name"})',
+        legendFormat: 'Not Ready',
+      },
+      {
+        query: 'sum(fleet_gitrepo_resources_missing{exported_namespace="$namespace",name=~"$name"})',
+        legendFormat: 'Missing',
+      },
+      {
+        query: 'sum(fleet_gitrepo_resources_modified{exported_namespace="$namespace",name=~"$name"})',
+        legendFormat: 'Modified',
+      },
+      {
+        query: 'sum(fleet_gitrepo_resources_unknown{exported_namespace="$namespace",name=~"$name"})',
+        legendFormat: 'Unknown',
+      },
     ],
   ),
 ];
