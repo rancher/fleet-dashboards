@@ -4,7 +4,7 @@ local g = import 'g.libsonnet';
 
 local panels = [
   fns.createStatPanel(
-    'Clusters Ready Percent',
+    'Ready Clusters',
     [
       {
         query: 'sum(fleet_gitrepo_ready_clusters{exported_namespace="$namespace",name=~"$name"}) / sum(fleet_gitrepo_desired_ready_clusters{exported_namespace="$namespace",name=~"$name"})',
@@ -14,7 +14,7 @@ local panels = [
     options={ width: 12, unit: 'percentunit' },
   ),
   fns.createStatPanel(
-    'Clusters Desired Ready/Ready',
+    'Clusters',
     [
       {
         query: 'sum(fleet_gitrepo_desired_ready_clusters{exported_namespace="$namespace",name=~"$name"})',
@@ -44,7 +44,7 @@ local panels = [
     ]
   ),
   fns.createStatPanel(
-    'Resources Ready Percent',
+    'Resources Ready',
     [
       {
         query: 'sum(fleet_gitrepo_resources_ready{exported_namespace="$namespace",name=~"$name"}) / sum(fleet_gitrepo_resources_desired_ready{exported_namespace="$namespace",name=~"$name"})',
@@ -54,7 +54,7 @@ local panels = [
     { unit: 'percentunit', width: 12 },
   ),
   fns.createStatPanel(
-    'Resources Desired Ready/Ready',
+    'Resources',
     [
       {
         query: 'sum(fleet_gitrepo_resources_desired_ready{exported_namespace="$namespace",name=~"$name"})',
