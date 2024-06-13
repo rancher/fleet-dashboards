@@ -28,6 +28,12 @@ local templateVar(templateVarName, labelName, metricName, includeAll=false) =
       'exported_namespace',
       'fleet_bundle_desired_ready',
     ),
+    name: templateVar(
+      'name',
+      'name',
+      'fleet_bundle_desired_ready{exported_namespace=~"$namespace"}',
+      true,
+    ),
   },
   cluster: {
     namespace: templateVar(
