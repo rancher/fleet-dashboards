@@ -11,7 +11,7 @@ local panels = [
         legendFormat: 'Ready Clusters Percent',
       },
     ],
-    options={ height: 5, width: 12, unit: 'percentunit' },
+    options={ height: 5, width: 7, unit: 'percentunit' },
   ),
   fns.createStatPanel(
     'Clusters',
@@ -29,7 +29,7 @@ local panels = [
         legendFormat: 'Not Ready',
       },
     ],
-    options={ height: 5, width: 12 },
+    options={ height: 5, width: 17 },
   ),
   fns.createTimeSeriesPanel(
     'Clusters', [
@@ -51,7 +51,7 @@ local panels = [
         legendFormat: 'Ready Resources Percent',
       },
     ],
-    { height: 5, width: 12, unit: 'percentunit' },
+    { height: 5, width: 7, unit: 'percentunit' },
   ),
   fns.createStatPanel(
     'Resources',
@@ -69,7 +69,7 @@ local panels = [
         legendFormat: 'Not Ready',
       },
     ],
-    { height: 5, width: 12 },
+    { height: 5, width: 17 },
   ),
   fns.createTimeSeriesPanel(
     'Resources',
