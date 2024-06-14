@@ -54,5 +54,11 @@ local templateVar(templateVarName, labelName, metricName, includeAll=false) =
       'exported_namespace',
       'fleet_cluster_group_bundle_desired_ready',
     ),
+    name: templateVar(
+      'name',
+      'name',
+      'fleet_cluster_group_bundle_desired_ready{exported_namespace=~"$namespace"}',
+      true,
+    ),
   },
 }

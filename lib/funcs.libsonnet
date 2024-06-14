@@ -1,7 +1,7 @@
 local g = import 'g.libsonnet';
 
-local defaultHeight = 8;  // TODO Import from a config.json/defaults.json?
-local defaultWidth = 24;
+local defaultHeight = 8;
+local defaultWidth = 24; // 24 is the maximum width of a row in Grafana.
 
 local assignGridPosByWidth(panels) =
   local gridWidth = 24;
@@ -27,7 +27,6 @@ local assignGridPosByWidth(panels) =
     local result = std.foldl(foldFunc, panels, { panels: [], currentWidth: 0, currentHeight: 0 });
     result.panels;
   assignPos(panels);
-
 
 local fromQueries(queries) = [
   g.query.prometheus.new('prometheus', query.query)
@@ -63,9 +62,22 @@ local createDashboard(name, uid, description, panels, variables=[]) =
   + g.dashboard.time.withTo('now')
   + if std.length(variables) > 0 then g.dashboard.withVariables(variables) else {};
 
+local createPanelGroup(data) = [
+  createStatPanel(
+    data.readyTitle,
+    [
+      { query: data.readyQuery },
+    ],
+    options={ height: 5, width: 7, unit: 'percentunit' },
+  ),
+  createStatPanel('Bundles', data.queries, options={ height: 5, width: 17 },),
+  createTimeSeriesPanel('Bundles', data.queries,),
+];
+
 
 {
+  createStatPanel: createStatPanel,
   createTimeSeriesPanel: createTimeSeriesPanel,
   createDashboard: createDashboard,
-  createStatPanel: createStatPanel,
+  createPanelGroup: createPanelGroup,
 }
