@@ -61,4 +61,11 @@ local templateVar(templateVarName, labelName, metricName, includeAll=false) =
       true,
     ),
   },
+  bundleDeployment: {
+    namespace: templateVar(
+      'namespace',
+      'cluster_namespace',
+      'fleet_bundledeployment_state',
+    ),
+  },
 }
