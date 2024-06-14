@@ -7,12 +7,12 @@ local bundles = {
   title: 'Bundles',
   queries: [
     {
-      query: 'sum(fleet_cluster_group_bundle_ready{exported_namespace="$namespace",name=~"$name"})',
-      legendFormat: 'Ready',
-    },
-    {
       query: 'sum(fleet_cluster_group_bundle_desired_ready{exported_namespace="$namespace",name=~"$name"})',
       legendFormat: 'Desired Ready',
+    },
+    {
+      query: 'sum(fleet_cluster_group_bundle_ready{exported_namespace="$namespace",name=~"$name"})',
+      legendFormat: 'Ready',
     },
   ],
 };
