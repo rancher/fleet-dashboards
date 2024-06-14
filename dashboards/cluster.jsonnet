@@ -19,7 +19,7 @@ local gitRepos = lib.panelGroupData(
 
 local resources = lib.panelGroupData(
   readyTitle='Ready Resources',
-  readyQuery='sum(fleet_cluster_resources_count_desiredready{exported_namespace="$namespace",name=~"$name"}) / sum(fleet_cluster_resources_count_ready{exported_namespace="$namespace",name=~"$name"})',
+  readyQuery='sum(fleet_cluster_resources_count_ready{exported_namespace="$namespace",name=~"$name"}) / sum(fleet_cluster_resources_count_desiredready{exported_namespace="$namespace",name=~"$name"})',
   title='Resources',
   queries=[
     {
