@@ -70,8 +70,8 @@ local createPanelGroup(data) = [
     ],
     options={ height: 5, width: 7, unit: 'percentunit' },
   ),
-  createStatPanel('Bundles', data.queries, options={ height: 5, width: 17 },),
-  createTimeSeriesPanel('Bundles', data.queries,),
+  createStatPanel(data.title, data.queries, options={ height: 5, width: 17 },),
+  createTimeSeriesPanel(data.title, data.queries,),
 ];
 
 
