@@ -74,10 +74,18 @@ local createPanelGroup(data) = [
   createTimeSeriesPanel(data.title, data.queries,),
 ];
 
+local panelGroupData(readyTitle, readyQuery, title, queries) =
+  {
+    readyTitle: readyTitle,
+    readyQuery: readyQuery,
+    title: title,
+    queries: queries,
+  };
 
 {
   createStatPanel: createStatPanel,
   createTimeSeriesPanel: createTimeSeriesPanel,
   createDashboard: createDashboard,
   createPanelGroup: createPanelGroup,
+  panelGroupData: panelGroupData,
 }

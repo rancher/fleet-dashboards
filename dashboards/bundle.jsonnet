@@ -1,11 +1,11 @@
 local lib = import '../lib/funcs.libsonnet';
 local vars = (import '../lib/variables.libsonnet').bundle;
 
-local bundles = {
-  readyTitle: 'Ready Bundles',
-  readyQuery: 'sum(fleet_bundle_ready{exported_namespace="$namespace",name=~"$name"}) / sum(fleet_bundle_desired_ready{exported_namespace="$namespace",name=~"$name"})',
-  title: 'Bundles',
-  queries: [
+local bundles = lib.panelGroupData(
+  readyTitle='Ready Bundles',
+  readyQuery='sum(fleet_bundle_ready{exported_namespace="$namespace",name=~"$name"}) / sum(fleet_bundle_desired_ready{exported_namespace="$namespace",name=~"$name"})',
+  title='Bundles',
+  queries=[
     {
       query: 'sum(fleet_bundle_desired_ready{exported_namespace="$namespace",name=~"$name"})',
       legendFormat: 'Desired Ready',
@@ -39,7 +39,7 @@ local bundles = {
       legendFormat: 'Wait Applied',
     },
   ],
-};
+);
 
 local panels = lib.createPanelGroup(bundles);
 

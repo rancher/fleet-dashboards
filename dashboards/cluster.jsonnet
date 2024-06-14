@@ -1,11 +1,11 @@
 local lib = import '../lib/funcs.libsonnet';
 local vars = (import '../lib/variables.libsonnet').cluster;
 
-local gitRepos = {
-  readyTitle: 'Ready Git Repos',
-  readyQuery: 'sum(fleet_cluster_ready_git_repos{exported_namespace="$namespace",name=~"$name"}) / sum(fleet_cluster_desired_ready_git_repos{exported_namespace="$namespace",name=~"$name"})',
-  title: 'Git Repos',
-  queries: [
+local gitRepos = lib.panelGroupData(
+  readyTitle='Ready Git Repos',
+  readyQuery='sum(fleet_cluster_ready_git_repos{exported_namespace="$namespace",name=~"$name"}) / sum(fleet_cluster_desired_ready_git_repos{exported_namespace="$namespace",name=~"$name"})',
+  title='Git Repos',
+  queries=[
     {
       query: 'sum(fleet_cluster_desired_ready_git_repos{exported_namespace="$namespace",name=~"$name"})',
       legendFormat: 'Desired Ready',
@@ -15,13 +15,13 @@ local gitRepos = {
       legendFormat: 'Ready',
     },
   ],
-};
+);
 
-local resources = {
-  readyTitle: 'Ready Resources',
-  readyQuery: 'sum(fleet_cluster_resources_count_desiredready{exported_namespace="$namespace",name=~"$name"}) / sum(fleet_cluster_resources_count_ready{exported_namespace="$namespace",name=~"$name"})',
-  title: 'Resources',
-  queries: [
+local resources = lib.panelGroupData(
+  readyTitle='Ready Resources',
+  readyQuery='sum(fleet_cluster_resources_count_desiredready{exported_namespace="$namespace",name=~"$name"}) / sum(fleet_cluster_resources_count_ready{exported_namespace="$namespace",name=~"$name"})',
+  title='Resources',
+  queries=[
     {
       query: 'sum(fleet_cluster_resources_count_desiredready{exported_namespace="$namespace",name=~"$name"})',
       legendFormat: 'Desired Ready',
@@ -55,13 +55,13 @@ local resources = {
       legendFormat: 'Wait Applied',
     },
   ],
-};
+);
 
-local clusters = {
-  readyTitle: 'Ready Clusters',
-  readyQuery: 'sum(fleet_cluster_state{exported_namespace="$namespace",name=~"$name",state="Ready"}) / sum(fleet_cluster_state{exported_namespace="$namespace",name=~"$name"})',
-  title: 'Clusters',
-  queries: [
+local clusters = lib.panelGroupData(
+  readyTitle='Ready Clusters',
+  readyQuery='sum(fleet_cluster_state{exported_namespace="$namespace",name=~"$name",state="Ready"}) / sum(fleet_cluster_state{exported_namespace="$namespace",name=~"$name"})',
+  title='Clusters',
+  queries=[
     {
       query: 'sum(fleet_cluster_state{exported_namespace="$namespace",name=~"$name",state="Ready"})',
       legendFormat: 'Ready',
@@ -75,7 +75,7 @@ local clusters = {
       legendFormat: 'Wait Check In',
     },
   ],
-};
+);
 
 local panels =
   lib.createPanelGroup(gitRepos) + lib.createPanelGroup(resources) + lib.createPanelGroup(clusters);
