@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+mapfile ADJECTIVES < "$(dirname "$0")/adjectives.txt"
+mapfile ANIMALS < "$(dirname "$0")/animals.txt"
+
+namespaces="fleet-local fleet-default"
+
+for ns in $namespaces; do
+  # rnd=$(openssl rand -hex 4)
+  RANDOM_ADJECTIVE=$(echo ${ADJECTIVES[$RANDOM % ${#ADJECTIVES[@]} ]})
+  RANDOM_ANIMAL=$(echo ${ANIMALS[$RANDOM % ${#ANIMALS[@]} ]})
+  rnd="$RANDOM_ADJECTIVE-$RANDOM_ANIMAL"
+  kubectl apply -f - <<EOF
+apiVersion: fleet.cattle.io/v1alpha1
+kind: Cluster
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: fleet-cluster
+    objectset.rio.cattle.io/owner-gvk: provisioning.cattle.io/v1, Kind=Cluster
+    objectset.rio.cattle.io/owner-name: $rnd
+    objectset.rio.cattle.io/owner-namespace: fleet-default
+  creationTimestamp: "2024-06-07T11:07:30Z"
+  generation: 2
+  labels:
+    management.cattle.io/cluster-display-name: $rnd
+    management.cattle.io/cluster-name: $rnd
+    # objectset.rio.cattle.io/hash: 343452d0630e607d09872d4e4bfca8a5710bff57
+    provider.cattle.io: k3s
+  name: $rnd
+  namespace: $ns
+spec:
+  agentAffinity:
+    nodeAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - preference:
+          matchExpressions:
+          - key: fleet.cattle.io/agent
+            operator: In
+            values:
+            - "true"
+        weight: 1
+  clientID: $rnd
+  kubeConfigSecret: $rnd-kubeconfig
+  kubeConfigSecretNamespace: $ns
+EOF
+done

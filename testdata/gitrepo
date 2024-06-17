@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+mapfile ADJECTIVES < "$(dirname "$0")/adjectives.txt"
+mapfile ANIMALS < "$(dirname "$0")/animals.txt"
+
+namespaces="fleet-local fleet-default"
+for ns in $namespaces; do
+  # rnd=$(openssl rand -hex 4)
+  RANDOM_ADJECTIVE=$(echo ${ADJECTIVES[$RANDOM % ${#ADJECTIVES[@]} ]})
+  RANDOM_ANIMAL=$(echo ${ANIMALS[$RANDOM % ${#ANIMALS[@]} ]})
+  rnd="$RANDOM_ADJECTIVE-$RANDOM_ANIMAL"
+  kubectl apply -f - <<EOF
+apiVersion: fleet.cattle.io/v1alpha1
+kind: GitRepo
+metadata:
+  name: simple-$rnd
+  namespace: $ns
+spec:
+  targetNamespace: testdata-$rnd
+  paths:
+  - simple
+  repo: https://github.com/rancher/fleet-examples
+  branch: main
+EOF
+done
+
