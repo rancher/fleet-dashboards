@@ -68,4 +68,16 @@ local templateVar(templateVarName, labelName, metricName, includeAll=false) =
       'fleet_bundledeployment_state',
     ),
   },
+  controllerRuntime: {
+    namespace: templateVar(
+      'namespace',
+      'namespace',
+      'controller_runtime_reconcile_total',
+    ),
+    job: templateVar(
+      'job',
+      'job',
+      'controller_runtime_reconcile_total{namespace=~"$namespace"}',
+    ),
+  },
 }
