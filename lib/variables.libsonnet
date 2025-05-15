@@ -80,4 +80,17 @@ local templateVar(templateVarName, labelName, metricName, includeAll=false) =
       'controller_runtime_reconcile_total{namespace=~"$namespace"}',
     ),
   },
+  gitjob: {
+    namespace: templateVar(
+      'namespace',
+      'exported_namespace',
+      'fleet_gitrepo_fetch_latest_commit_duration_seconds_bucket',
+    ),
+    name: templateVar(
+      'name',
+      'name',
+      'fleet_gitrepo_fetch_latest_commit_duration_seconds_bucket{exported_namespace=~"$namespace"}',
+      true,
+    ),
+  },
 }

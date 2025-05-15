@@ -83,6 +83,41 @@ local createPanelGroup(data) = [
   createTimeSeriesPanel(data.title, data.queries,),
 ];
 
+local createHistogramPanelGroup(title, metric) = [
+  g.panel.row.new(title),
+  createTimeSeriesPanel('99th Percentile', [
+    {
+      query: 'histogram_quantile(0.99, sum(increase(%s{exported_namespace=~"$namespace",name=~"$name"}[$__rate_interval])) by (le, namespace, name)) > 0' % [metric],
+      legendFormat: '{{name}} in {{namespace}}',
+    },
+  ], { width: 8, height: defaultHeight }),
+  createTimeSeriesPanel('90th Percentile', [
+    {
+      query: 'histogram_quantile(0.90, sum(increase(%s{exported_namespace=~"$namespace",name=~"$name"}[$__rate_interval])) by (le, namespace, name)) > 0' % [metric],
+      legendFormat: '{{name}} in {{namespace}}',
+    },
+  ], { width: 8, height: defaultHeight }),
+  createTimeSeriesPanel('50th Percentile', [
+    {
+      query: 'histogram_quantile(0.50, sum(increase(%s{exported_namespace=~"$namespace",name=~"$name"}[$__rate_interval])) by (le, namespace, name)) > 0' % [metric],
+      legendFormat: '{{name}} in {{namespace}}',
+    },
+  ], { width: 8, height: defaultHeight }),
+  createBarGaugePanel('Total distribution', [
+    {
+      query: 'sum by (le) (increase(%s{exported_namespace=~"$namespace",name=~"$name"}[$__range]))' % [metric],
+      format: 'heatmap',
+    },
+  ], { width: 12, height: defaultHeight }),
+  createHeatmapPanel('Heatmap', [
+    {
+      query: 'sum(increase(%s{exported_namespace=~"$namespace",name=~"$name"}[$__rate_interval])) by (le)' % [metric],
+      format: 'heatmap',
+      legendFormat: '{{name}} in {{namespace}}',
+    },
+  ], { width: 12, height: defaultHeight }),
+];
+
 local panelGroupData(readyTitle, readyQuery, title, queries) =
   {
     readyTitle: readyTitle,
@@ -98,5 +133,6 @@ local panelGroupData(readyTitle, readyQuery, title, queries) =
   createHeatmapPanel: createHeatmapPanel,
   createDashboard: createDashboard,
   createPanelGroup: createPanelGroup,
+  createHistogramPanelGroup: createHistogramPanelGroup,
   panelGroupData: panelGroupData,
 }
