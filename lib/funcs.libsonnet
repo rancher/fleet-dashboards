@@ -1,7 +1,7 @@
 local g = import 'g.libsonnet';
 
 local defaultHeight = 8;
-local defaultWidth = 24; // 24 is the maximum width of a row in Grafana.
+local defaultWidth = 24;  // 24 is the maximum width of a row in Grafana.
 
 local assignGridPosByWidth(panels) =
   local gridWidth = 24;
@@ -32,6 +32,8 @@ local fromQueries(queries) = [
   g.query.prometheus.new('prometheus', query.query)
   + (if std.get(query, 'legendFormat') != null
      then g.query.prometheus.withLegendFormat(query.legendFormat) else {})
+  + (if std.get(query, 'format') != null
+     then g.query.prometheus.withFormat(query.format) else {})
   for query in queries
 ];
 
@@ -49,6 +51,13 @@ local createStatPanel(title, queries, options={}) =
 
 local createTimeSeriesPanel(title, queries, options={}) =
   createPanel(g.panel.timeSeries, title, queries, options);
+
+local createBarGaugePanel(title, queries, options={}) =
+  createPanel(g.panel.barGauge, title, queries, options);
+
+local createHeatmapPanel(title, queries, options={}) =
+  createPanel(g.panel.heatmap, title, queries, options)
+  + g.panel.heatmap.options.withColor({ reverse: true });
 
 local createDashboard(name, uid, description, panels, variables=[]) =
   local pls = assignGridPosByWidth(panels);
@@ -85,6 +94,8 @@ local panelGroupData(readyTitle, readyQuery, title, queries) =
 {
   createStatPanel: createStatPanel,
   createTimeSeriesPanel: createTimeSeriesPanel,
+  createBarGaugePanel: createBarGaugePanel,
+  createHeatmapPanel: createHeatmapPanel,
   createDashboard: createDashboard,
   createPanelGroup: createPanelGroup,
   panelGroupData: panelGroupData,
