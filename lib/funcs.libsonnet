@@ -1,7 +1,7 @@
 local g = import 'g.libsonnet';
 
 local defaultHeight = 8;
-local defaultWidth = 24; // 24 is the maximum width of a row in Grafana.
+local defaultWidth = 24;  // 24 is the maximum width of a row in Grafana.
 
 local assignGridPosByWidth(panels) =
   local gridWidth = 24;
@@ -32,6 +32,8 @@ local fromQueries(queries) = [
   g.query.prometheus.new('prometheus', query.query)
   + (if std.get(query, 'legendFormat') != null
      then g.query.prometheus.withLegendFormat(query.legendFormat) else {})
+  + (if std.get(query, 'format') != null
+     then g.query.prometheus.withFormat(query.format) else {})
   for query in queries
 ];
 
@@ -49,6 +51,13 @@ local createStatPanel(title, queries, options={}) =
 
 local createTimeSeriesPanel(title, queries, options={}) =
   createPanel(g.panel.timeSeries, title, queries, options);
+
+local createBarGaugePanel(title, queries, options={}) =
+  createPanel(g.panel.barGauge, title, queries, options);
+
+local createHeatmapPanel(title, queries, options={}) =
+  createPanel(g.panel.heatmap, title, queries, options)
+  + g.panel.heatmap.options.withColor({ reverse: true });
 
 local createDashboard(name, uid, description, panels, variables=[]) =
   local pls = assignGridPosByWidth(panels);
@@ -74,6 +83,41 @@ local createPanelGroup(data) = [
   createTimeSeriesPanel(data.title, data.queries,),
 ];
 
+local createHistogramPanelGroup(title, metric) = [
+  g.panel.row.new(title),
+  createTimeSeriesPanel('99th Percentile', [
+    {
+      query: 'histogram_quantile(0.99, sum(increase(%s{exported_namespace=~"$namespace",name=~"$name"}[$__rate_interval])) by (le, namespace, name)) > 0' % [metric],
+      legendFormat: '{{name}} in {{namespace}}',
+    },
+  ], { width: 8, height: defaultHeight }),
+  createTimeSeriesPanel('90th Percentile', [
+    {
+      query: 'histogram_quantile(0.90, sum(increase(%s{exported_namespace=~"$namespace",name=~"$name"}[$__rate_interval])) by (le, namespace, name)) > 0' % [metric],
+      legendFormat: '{{name}} in {{namespace}}',
+    },
+  ], { width: 8, height: defaultHeight }),
+  createTimeSeriesPanel('50th Percentile', [
+    {
+      query: 'histogram_quantile(0.50, sum(increase(%s{exported_namespace=~"$namespace",name=~"$name"}[$__rate_interval])) by (le, namespace, name)) > 0' % [metric],
+      legendFormat: '{{name}} in {{namespace}}',
+    },
+  ], { width: 8, height: defaultHeight }),
+  createBarGaugePanel('Total distribution', [
+    {
+      query: 'sum by (le) (increase(%s{exported_namespace=~"$namespace",name=~"$name"}[$__range]))' % [metric],
+      format: 'heatmap',
+    },
+  ], { width: 12, height: defaultHeight }),
+  createHeatmapPanel('Heatmap', [
+    {
+      query: 'sum(increase(%s{exported_namespace=~"$namespace",name=~"$name"}[$__rate_interval])) by (le)' % [metric],
+      format: 'heatmap',
+      legendFormat: '{{name}} in {{namespace}}',
+    },
+  ], { width: 12, height: defaultHeight }),
+];
+
 local panelGroupData(readyTitle, readyQuery, title, queries) =
   {
     readyTitle: readyTitle,
@@ -85,7 +129,10 @@ local panelGroupData(readyTitle, readyQuery, title, queries) =
 {
   createStatPanel: createStatPanel,
   createTimeSeriesPanel: createTimeSeriesPanel,
+  createBarGaugePanel: createBarGaugePanel,
+  createHeatmapPanel: createHeatmapPanel,
   createDashboard: createDashboard,
   createPanelGroup: createPanelGroup,
+  createHistogramPanelGroup: createHistogramPanelGroup,
   panelGroupData: panelGroupData,
 }
